@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Investigation Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .widget-container {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            max-width: 700px;
+            margin: 0 auto;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Simulating a "Viral Post" look */
+        .viral-tag {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: white;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+        .news-headline {
+            font-family: 'Georgia', serif;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        /* Fade animation for switching cards */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6 flex items-center justify-center min-h-screen">
+
+    <div class="widget-container w-full">
+        
+        <div class="bg-slate-900 text-white p-5 border-b border-slate-700">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="eye" class="text-blue-400"></i>
+                    <h2 class="text-lg font-bold tracking-wide">SCENARIO VIEWER</h2>
+                </div>
+                
+                <div class="flex items-center gap-2 bg-slate-800 rounded px-2 py-1 border border-slate-700">
+                    <label for="grade-select" class="text-xs text-slate-400 font-mono uppercase">Class Level:</label>
+                    <select id="grade-select" class="bg-transparent text-white font-bold text-sm focus:outline-none cursor-pointer">
+                        <option value="6">GRADE 6</option>
+                        <option value="7">GRADE 7</option>
+                        <option value="8">GRADE 8</option>
+                    </select>
+                </div>
+            </div>
+
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Select Investigation Target:</label>
+            <div class="relative text-slate-800">
+                <select id="scenario-select" class="w-full p-3 pr-10 rounded-lg bg-slate-100 border-2 border-slate-200 focus:border-blue-500 focus:ring-0 font-medium cursor-pointer appearance-none transition-colors">
+                    </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
+                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </div>
+            </div>
+        </div>
+
+        <div id="card-container" class="p-6 bg-slate-50">
+            
+            <div class="news-card shadow-md mb-6 fade-in">
+                
+                <div class="relative h-64 bg-gray-200 overflow-hidden group">
+                    <img id="news-image" src="" alt="News Image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4">
+                        <span class="viral-tag shadow-sm">Trending Now</span>
+                    </div>
+                </div>
+
+                <div class="p-5">
+                    <div class="flex items-center gap-2 text-gray-500 text-xs font-medium mb-3">
+                        <i data-lucide="globe" class="w-3 h-3 text-blue-500"></i>
+                        <span id="source-mock" class="font-mono tracking-tight"></span>
+                    </div>
+                    
+                    <h1 id="news-headline" class="news-headline text-2xl text-gray-900 mb-3"></h1>
+                    
+                    <div class="mt-4 text-gray-600 text-sm leading-relaxed border-l-4 border-gray-300 pl-4 italic">
+                        "<span id="news-desc"></span>"
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-600 text-white rounded-lg p-5 shadow-lg flex items-start gap-4 fade-in">
+                <div class="bg-white/20 p-2 rounded-full shrink-0">
+                    <i data-lucide="search" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-blue-100 text-xs uppercase tracking-wider mb-1">Your Mission</h3>
+                    <p id="investigation-task" class="font-semibold text-lg leading-tight"></p>
+                    <p class="text-blue-200 text-sm mt-2 font-mono" id="task-subtext"></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA REPOSITORY ---
+        
+        const scenarioData = {
+            "6": [
+                {
+                    id: "6-1",
+                    title: "The Chocolate Milk Ban",
+                    headline: "US Dept of Education Bans Chocolate Milk in All Middle Schools Starting Monday",
+                    source: "National-School-Alerts.co",
+                    time: "2 hrs ago",
+                    desc: "Citing 'sugar hyperactivity,' federal regulators are confiscating all chocolate milk cartons from cafeteria fridges this weekend.",
+                    task: "Highlight and copy (Ctrl+C) this phrase: 'Department of Education chocolate milk ban'.",
+                    subtext: "Paste (Ctrl+V) into Google. Check the AI summary sources: Are they .gov or news?",
+                    localFilename: "grade6_choc_milk.jpg"
+                },
+                {
+                    id: "6-2",
+                    title: "The Weekend Cancellation",
+                    headline: "NASA Scientists Say Earth is Spinning Faster: 2026 Will Have No Saturdays",
+                    source: "Science-Viral-Now.net",
+                    time: "Just now",
+                    desc: "To correct the planet's rotation, world leaders have agreed to remove Saturdays from the calendar for the next 5 years.",
+                    task: "Copy (Ctrl+C) this phrase: 'NASA removing Saturdays 2026'.",
+                    subtext: "Paste (Ctrl+V) into Google. Does the AI summary verify this with NASA sources?",
+                    localFilename: "grade6_no_saturday.jpg"
+                },
+                {
+                    id: "6-3",
+                    title: "Free PS5 Giveaway",
+                    headline: "Sony Announcements: Every US Student with a 'B' Average Gets Free PS5",
+                    source: "Sony-Official-Rewards.xyz",
+                    time: "10 mins ago",
+                    desc: "The 'Good Grades for Gaming' initiative launches today. Click here to claim your console before they run out.",
+                    task: "Copy (Ctrl+C): 'Sony B average free PS5 student program'.",
+                    subtext: "Paste (Ctrl+V) into Google. Look for official Sony.com links in the results.",
+                    localFilename: "grade6_free_ps5.jpg"
+                },
+                {
+                    id: "6-4",
+                    title: "The 13th Month",
+                    headline: "Calendar Update: New Month 'Undecimber' Added Between June and July",
+                    source: "World-Time-News.org",
+                    time: "4 hrs ago",
+                    desc: "The UN has voted to add a 13th month to the year to align with the lunar cycle, extending summer vacation by 30 days.",
+                    task: "Copy (Ctrl+C): 'UN adds 13th month Undecimber'.",
+                    subtext: "Paste (Ctrl+V) into Google. Does the AI summary mention 'hoax' or 'satire'?",
+                    localFilename: "grade6_13th_month.jpg"
+                },
+                {
+                    id: "6-5",
+                    title: "Blue Takis Recall",
+                    headline: "FDA WARNING: Blue Takis Contain Paint Pigment, Recalled Nationwide",
+                    source: "Snack-Health-Daily.com",
+                    time: "Yesterday",
+                    desc: "Reports claim the blue dust is actually industrial wall paint that stains intestines permanently.",
+                    task: "Copy (Ctrl+C): 'FDA recall Blue Takis paint pigment'.",
+                    subtext: "Paste (Ctrl+V). Check the AI summary for a 'false' label or 'myth' check.",
+                    localFilename: "grade6_takis_paint.jpg"
+                },
+                {
+                    id: "6-6",
+                    title: "MrBeast on Mars",
+                    headline: "MrBeast Buys Ticket to Mars, Says He Will Film First Video in Space",
+                    source: "Tube-News-Daily.net",
+                    time: "1 hr ago",
+                    desc: "The YouTuber reportedly paid $500 million to SpaceX to host a 'Last to Leave Mars' challenge.",
+                    task: "Copy (Ctrl+C): 'MrBeast filming video on Mars SpaceX'.",
+                    subtext: "Paste (Ctrl+V). If true, every major news outlet (CNN, BBC) would list it.",
+                    localFilename: "grade6_mrbeast_mars.jpg"
+                },
+                {
+                    id: "6-7",
+                    title: "The Fortnite Fee",
+                    headline: "Fortnite to Charge $50 Monthly Subscription Starting Next Season",
+                    source: "Epic-Games-Leaks.biz",
+                    time: "URGENT",
+                    desc: "Leaked documents show the Battle Royale mode will no longer be free-to-play starting next month.",
+                    task: "Copy (Ctrl+C): 'Fortnite $50 monthly subscription fee rumor'.",
+                    subtext: "Paste (Ctrl+V). Look for an official statement from Epic Games.",
+                    localFilename: "grade6_fortnite_fee.jpg"
+                },
+                {
+                    id: "6-8",
+                    title: "Dog Texting App",
+                    headline: "New 'Bark-to-Text' Collar Lets Your Dog Send You Text Messages",
+                    source: "Tech-Future-Trends.info",
+                    time: "30 mins ago",
+                    desc: "This AI collar translates barks into English and sends them directly to your iMessage.",
+                    task: "Copy (Ctrl+C): 'Dog collar that sends text messages bark translation'.",
+                    subtext: "Paste (Ctrl+V). Is this a real product or a prank video?",
+                    localFilename: "grade6_dog_text.jpg"
+                },
+                {
+                    id: "6-9",
+                    title: "Homework Ban Law",
+                    headline: "Supreme Court Rules Homework Illegal for Grades K-8",
+                    source: "Legal-News-Breaker.co",
+                    time: "Last Night",
+                    desc: "The court ruled 9-0 that homework constitutes 'cruel and unusual punishment' under the Constitution.",
+                    task: "Copy (Ctrl+C): 'Supreme Court rules homework illegal K-8'.",
+                    subtext: "Paste (Ctrl+V). This is a huge claim—verify with a reputable news source.",
+                    localFilename: "grade6_homework_ban.jpg"
+                },
+                {
+                    id: "6-10",
+                    title: "The Purple Moon",
+                    headline: "Rare 'Purple Moon' Phenomenon Visible Tonight Only - Won't Happen Again for 1000 Years",
+                    source: "Astro-Viral-Pics.net",
+                    time: "Today",
+                    desc: "Due to atmospheric dust from a meteor shower, the moon will appear bright purple across North America.",
+                    task: "Copy (Ctrl+C): 'Purple moon phenomenon tonight NASA'.",
+                    subtext: "Paste (Ctrl+V). Check the AI summary for scientific confirmation.",
+                    localFilename: "grade6_purple_moon.jpg"
+                }
+            ],
+            "7": [
+                {
+                    id: "7-1",
+                    title: "The 'Tax' on Kids",
+                    headline: "Congress Passes Law: Children's Allowance to be Taxed 15% Starting 2026",
+                    source: "Politics-Watcher-Daily.org",
+                    time: "Viral",
+                    desc: "A viral tweet claims that under new legislation, parents must withhold taxes from weekly allowance payments.",
+                    task: "Search 'site:.gov' to see if there is any official legislation on this.",
+                    subtext: "Sample search: IRS taxing child allowance site:.gov",
+                    localFilename: "grade7_allowance_tax.jpg"
+                },
+                {
+                    id: "7-2",
+                    title: "Wombat Poop",
+                    headline: "Science Fact: Scientists Discover Why Wombat Poop is Cube-Shaped",
+                    source: "Nature-Curiosities-Blog",
+                    time: "Yesterday",
+                    desc: "It sounds like a joke, but this article claims wombats produce perfect cubes to prevent them from rolling away.",
+                    task: "Search the Exact Phrase in quotes to verify this weird biological fact.",
+                    subtext: "Sample Search: \"wombat poop is cube shaped\"",
+                    localFilename: "grade7_wombat_poop.jpg"
+                },
+                {
+                    id: "7-3",
+                    title: "The 'Vibes' Grades",
+                    headline: "Yale University Abolishes Letter Grades, Switches to 'Vibes-Based' Assessment",
+                    source: "College-Rumor-Insider.net",
+                    time: "4 hrs ago",
+                    desc: "A report claims the Ivy League school believes grades are 'outdated' and will now grade on 'effort and vibes'.",
+                    task: "Use 'site:.edu' to find if this appears on Yale's actual academic domain.",
+                    subtext: "Sample Search: Yale University grading system changes site:.edu",
+                    localFilename: "grade7_yale_grades.jpg"
+                },
+                {
+                    id: "7-4",
+                    title: "Snake vs Gator",
+                    headline: "Nature Alert: Massive Python Swallows Entire Crocodile in Florida Everglades",
+                    source: "Wildlife-Photo-Share",
+                    time: "Trending",
+                    desc: "Photos show a snake so large it consumed a predator. You need to check if this biological event is possible.",
+                    task: "Use the Minus (-) sign to exclude 'movies' or 'fiction' results.",
+                    subtext: "Sample Search: Python swallows crocodile Florida -movie -fiction",
+                    localFilename: "grade7_python_gator.jpg"
+                },
+                // {
+                //     id: "7-5",
+                //     title: "Celeb Dating Rumor",
+                //     headline: "Paparazzi: Taylor Swift Secretly Dating Elon Musk OR Jeff Bezos?",
+                //     source: "Gossip-Central-Leaks.xyz",
+                //     time: "Just now",
+                //     desc: "A tabloid claims the pop star is definitely dating one of the two billionaires. Fans are freaking out.",
+                //     task: "Use 'OR' (capitalized) to check if credible news links these names.",
+                //     subtext: "Sample Search: Taylor Swift dating Elon Musk OR Jeff Bezos",
+                //     localFilename: "grade7_swift_dating.jpg"
+                // },
+                {
+                    id: "7-6",
+                    title: "Computer Bug Origin",
+                    headline: "Tech History: The First 'Computer Bug' Was an Actual Moth Trapped in a Relay",
+                    source: "History-of-Code.blog",
+                    time: "Throwback",
+                    desc: "The term 'debugging' allegedly comes from Grace Hopper finding a real dead moth in a computer in 1947.",
+                    task: "Use 'site:.org' to find a historical society or museum verification.",
+                    subtext: "Sample Search: first computer bug moth site:.org",
+                    localFilename: "grade7_computer_bug.jpg"
+                },
+                {
+                    id: "7-7",
+                    title: "McPizza Return",
+                    headline: "Secret Menu Leak: McDonald's Pizza is Back Nationwide (Official PDF)",
+                    source: "Foodie-Alerts-2025.com",
+                    time: "1 hr ago",
+                    desc: "A link claims to host the 'Official 2025 Menu PDF' showing the return of the legendary McPizza.",
+                    task: "Use 'filetype:pdf' to see if an actual menu document exists.",
+                    subtext: "Sample search: McDonald's official menu 2025 pizza filetype:pdf",
+                    localFilename: "grade7_mcpizza.jpg"
+                },
+                {
+                    id: "7-8",
+                    title: "Historical Temp",
+                    headline: "Record Breaker: Hottest Temperature on Earth Recorded in Death Valley (1910..1920)",
+                    source: "Weather-Extremes-Daily",
+                    time: "N/A",
+                    desc: "You are looking for the specific record high temp that happened during this specific decade.",
+                    task: "Use two dots (..) to search the specific date range for the record.",
+                    subtext: "Sample Search: highest temperature Death Valley 1910..1920",
+                    localFilename: "grade7_death_valley.jpg"
+                },
+                {
+                    id: "7-9",
+                    title: "Pikachu Tail",
+                    headline: "Design Confirmed: Pikachu Officially Has a Black Tip on His Tail",
+                    source: "Anime-Facts-Trivia.net",
+                    time: "Trending",
+                    desc: "Thousands of fans swear they remember a black tip on the tail, and this article claims it's the official design.",
+                    task: "Use Exact Phrase to check the 'Mandela Effect' around this.",
+                    subtext: "Sample Search: \"Pikachu black tip on tail\" official design",
+                    localFilename: "grade7_pikachu_tail.jpg"
+                },
+                {
+                    id: "7-10",
+                    title: "Laughing Benefits",
+                    headline: "Health News: Laughing is Good for Your Cardio Health",
+                    source: "Medical-Wellness-Tips",
+                    time: "Today",
+                    desc: "This article claims laughing boosts blood flow similar to a mild workout. You want to find related heart benefits.",
+                    task: "Use the tilde (~) to search for synonyms of 'cardio' (like heart/vascular).",
+                    subtext: "Sample Search: laughing benefits ~cardio health",
+                    localFilename: "grade7_laughing_health.jpg"
+                }
+            ],
+            "8": [
+                // Grade 8: 5 True / 5 False. Tri-State/NYC Area focused.
+                
+                // 1. FALSE (Volcano)
+                {
+                    id: "8-1",
+                    title: "Central Park Volcano (FALSE)",
+                    headline: "Geologists Shocked: Dormant Volcano Discovered Under Central Park",
+                    source: "NYC-Science-Daily.net",
+                    time: "Viral",
+                    desc: "A viral map claims the Great Lawn is sitting on a magma chamber that could erupt 'at any moment.'",
+                    task: "1. Discuss: If false, how does this hurt tourism and cause panic for local residents?",
+                    subtext: "2. Verify: Search for USGS geological maps of Manhattan.",
+                    localFilename: "grade8_cp_volcano.jpg"
+                },
+                // 2. TRUE (Spiders)
+                {
+                    id: "8-2",
+                    title: "Parachuting Spiders (TRUE)",
+                    headline: "Invasive Species Alert: Giant 'Joro Spiders' Expected to Parachute into NYC Area",
+                    source: "Tri-State-Nature-Watch",
+                    time: "Trending",
+                    desc: "It sounds like a horror movie, but reports say these large, colorful spiders use webs to 'fly' north to New Jersey and NY.",
+                    task: "1. Discuss: Why do people automatically assume 'scary' animal stories are fake?",
+                    subtext: "2. Verify: Search reputable science sites (National Geographic, etc.) for 'Joro spider migration'.",
+                    localFilename: "grade8_joro_spider.jpg"
+                },
+                // 3. FALSE (Fare Hike)
+                {
+                    id: "8-3",
+                    title: "MTA $5 Fare (FALSE)",
+                    headline: "Leaked Memo: NYC Subway Fare Rising to $5.00 Per Ride Starting Next Month",
+                    source: "Transit-Leaks-Anonymous.xyz",
+                    time: "1 hr ago",
+                    desc: "Commuters are outraged after an image of a 'new rate card' surfaced on Reddit showing a massive price hike.",
+                    task: "1. Discuss: How does this rumor hurt the MTA's reputation and stress out students/workers?",
+                    subtext: "2. Verify: Check the official MTA.info website for press releases.",
+                    localFilename: "grade8_mta_fare.jpg"
+                },
+                // 4. TRUE (Pizza Oven Rules)
+                {
+                    id: "8-4",
+                    title: "Pizza Oven Rules (TRUE)",
+                    headline: "New NYC Rules Could Force Pizzerias to Ditch Coal and Wood-Fired Ovens",
+                    source: "Local-Eats-News",
+                    time: "Yesterday",
+                    desc: "Social media claims the city is 'banning pizza,' but the reality is a new air quality law targeting smoke emissions.",
+                    task: "1. Discuss: How does nuance get lost? (It's a regulation, not a total ban, but still affects shops).",
+                    subtext: "2. Verify: Search 'NYC DEP pizza oven rules' to read the actual law.",
+                    localFilename: "grade8_pizza_ban.jpg"
+                },
+                // 5. FALSE (NJ/NY Border)
+                {
+                    id: "8-5",
+                    title: "Liberty Island to NJ (FALSE)",
+                    headline: "Supreme Court Ruling: Statue of Liberty Officially Transferred to New Jersey",
+                    source: "Patriot-History-News.co",
+                    time: "Just Now",
+                    desc: "A report claims New York has lost the rights to the island and all maps must be redrawn immediately.",
+                    task: "1. Discuss: This rivalry is old—how does this headline capitalize on local anger?",
+                    subtext: "2. Verify: Search for recent Supreme Court rulings regarding 'New York New Jersey border'.",
+                    localFilename: "grade8_statue_liberty.jpg"
+                },
+                // 6. TRUE (Whales)
+                {
+                    id: "8-6",
+                    title: "Whales in Hudson (TRUE)",
+                    headline: "Nature Returns: Humpback Whales Spotted Swimming Near Statue of Liberty",
+                    source: "Ocean-Life-NY-NJ",
+                    time: "Last Week",
+                    desc: "Photos show massive whales breaching in the NY Harbor. Many think it's Photoshop.",
+                    task: "1. Discuss: Why is it hard to believe good environmental news?",
+                    subtext: "2. Verify: Search for 'Humpback whales NYC harbor return'.",
+                    localFilename: "grade8_whales.jpg"
+                },
+                // 7. FALSE (TikTok Ban)
+                {
+                    id: "8-7",
+                    title: "Statewide TikTok Ban (FALSE)",
+                    headline: "Governor Signs Bill: TikTok Blocked in NY & NJ for Under-18s Starting Monday",
+                    source: "Social-Media-Law-Daily.net",
+                    time: "Breaking",
+                    desc: "Influencers are crying on live streams claiming the app will be geo-blocked by local ISPs next week.",
+                    task: "1. Discuss: How does fear of losing connection drive clicks?",
+                    subtext: "2. Verify: Check major news outlets (NY Times, CNN) for state legislation.",
+                    localFilename: "grade8_tiktok_ban.jpg"
+                },
+                // 8. TRUE (Social Media Lawsuit)
+                {
+                    id: "8-8",
+                    title: "City Sues Socials (TRUE)",
+                    headline: "NYC Mayor Sues TikTok and Instagram for 'Fueling Youth Mental Health Crisis'",
+                    source: "City-Hall-Briefs",
+                    time: "Month ago",
+                    desc: "It sounds dramatic, but the city administration actually filed a lawsuit declaring social media a 'public health hazard'.",
+                    task: "1. Discuss: Whether you agree or not, is this lawsuit real?",
+                    subtext: "2. Verify: Search 'NYC lawsuit social media mental health'.",
+                    localFilename: "grade8_city_suit.jpg"
+                },
+                // 9. FALSE (Super Rats)
+                {
+                    id: "8-9",
+                    title: "Super-Rats (FALSE)",
+                    headline: "Biology Nightmare: New 'Super-Rat' Immune to Poison Taking Over Brooklyn",
+                    source: "Urban-Pest-Watch.info",
+                    time: "Trending",
+                    desc: "A blog claims a new mutation has created cat-sized rats that are aggressive toward humans.",
+                    task: "1. Discuss: How does the 'gross-out' factor make people share without checking?",
+                    subtext: "2. Verify: Reverse image search the 'giant rat' photo (likely forced perspective).",
+                    localFilename: "grade8_super_rats.jpg"
+                },
+                // 10. TRUE (Vertical Farm)
+                {
+                    id: "8-10",
+                    title: "Sci-Fi Farming (TRUE)",
+                    headline: "World's Largest Vertical Farm Opens in Newark, NJ - No Soil Needed",
+                    source: "Future-Ag-Tech-News",
+                    time: "Recently",
+                    desc: "It claims to grow millions of pounds of greens in a warehouse using aeroponics. Sounds like sci-fi.",
+                    task: "1. Discuss: How does 'too good to be true' technology skepticism work?",
+                    subtext: "2. Verify: Search 'AeroFarms Newark' or 'vertical farming NJ'.",
+                    localFilename: "grade8_vertical_farm.jpg"
+                }
+            ]
+        };
+
+        // DOM Elements
+        const gradeSelect = document.getElementById('grade-select');
+        const scenarioSelect = document.getElementById('scenario-select');
+        const headline = document.getElementById('news-headline');
+        const desc = document.getElementById('news-desc');
+        const sourceMock = document.getElementById('source-mock');
+        const task = document.getElementById('investigation-task');
+        const taskSubtext = document.getElementById('task-subtext');
+        const image = document.getElementById('news-image');
+        const container = document.getElementById('card-container');
+
+        // State
+        let currentGrade = "6";
+
+        // Init Icons
+        lucide.createIcons();
+
+        // Initialize App
+        function init() {
+            populateScenarioDropdown(currentGrade);
+            loadScenario(0);
+        }
+
+        // Update Scenario Dropdown based on Grade
+        function populateScenarioDropdown(grade) {
+            // Clear existing
+            scenarioSelect.innerHTML = '';
+            
+            const scenarios = scenarioData[grade];
+            
+            if (scenarios.length === 0) {
+                // Handle empty grade
+                const opt = document.createElement('option');
+                opt.textContent = "No content available";
+                scenarioSelect.appendChild(opt);
+                scenarioSelect.disabled = true;
+                return;
+            } else {
+                scenarioSelect.disabled = false;
+            }
+            
+            scenarios.forEach((item, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = item.title;
+                scenarioSelect.appendChild(opt);
+            });
+        }
+
+        // Load specific scenario data
+        function loadScenario(index) {
+            // Guard clause for empty data
+            if (!scenarioData[currentGrade] || scenarioData[currentGrade].length === 0) {
+                headline.textContent = "Content Unavailable";
+                desc.textContent = "There are no scenarios currently loaded for this grade level.";
+                sourceMock.textContent = "System System";
+                task.textContent = "Select a different grade level.";
+                taskSubtext.textContent = "";
+                image.src = "https://placehold.co/600x400/e2e8f0/64748b?text=No+Data";
+                return;
+            }
+
+            const scenario = scenarioData[currentGrade][index];
+            
+            // Fade Out
+            container.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                // Update Text Content
+                headline.textContent = scenario.headline;
+                desc.textContent = scenario.desc;
+                sourceMock.textContent = `${scenario.source} • ${scenario.time}`;
+                task.textContent = scenario.task;
+                taskSubtext.textContent = scenario.subtext;
+                
+                // Update Image with Local File Logic
+                // We attempt to load the local file. 
+                // The onerror handler creates a helpful placeholder if the file is missing locally.
+                image.onerror = function() {
+                    this.onerror = null; // Prevent infinite loop
+                    // Generates a placeholder image showing the missing filename for debugging/setup
+                    this.src = `https://placehold.co/600x400/e2e8f0/64748b?text=File+Missing:+${scenario.localFilename}`;
+                };
+                image.src = scenario.localFilename; // Assumes root folder
+                
+                // Fade In
+                container.style.opacity = '1';
+            }, 150);
+        }
+
+        // Event Listeners
+        gradeSelect.addEventListener('change', (e) => {
+            currentGrade = e.target.value;
+            populateScenarioDropdown(currentGrade);
+            loadScenario(0); // Reset to first card of new grade
+        });
+
+        scenarioSelect.addEventListener('change', (e) => {
+            loadScenario(e.target.value);
+        });
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>
