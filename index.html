@@ -12,7 +12,7 @@
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            max-width: 700px;
+            max-width: 800px; /* Increased width */
             margin: 0 auto;
             overflow: hidden;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -67,8 +67,14 @@
                     <h2 class="text-lg font-bold tracking-wide">SCENARIO VIEWER</h2>
                 </div>
                 
-                <div class="flex items-center gap-2 bg-slate-800 rounded px-2 py-1 border border-slate-700">
-                    <label for="grade-select" class="text-xs text-slate-400 font-mono uppercase">Class Level:</label>
+                <div class="flex items-center gap-3">
+                    <button id="info-btn" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded transition-colors border border-blue-500 shadow-sm" aria-label="View Mission Info">
+                        <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                        <span>MISSION INFO</span>
+                    </button>
+
+                    <div class="flex items-center gap-2 bg-slate-800 rounded px-2 py-1 border border-slate-700">
+                        <label for="grade-select" class="text-xs text-slate-400 font-mono uppercase">Class Level:</label>
                     <select id="grade-select" class="bg-transparent text-white font-bold text-sm focus:outline-none cursor-pointer">
                         <option value="6">GRADE 6</option>
                         <option value="7">GRADE 7</option>
@@ -91,8 +97,8 @@
             
             <div class="news-card shadow-md mb-6 fade-in">
                 
-                <div class="relative h-64 bg-gray-200 overflow-hidden group">
-                    <img id="news-image" src="" alt="News Image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                <div class="relative bg-gray-200 group">
+                    <img id="news-image" src="" alt="News Image" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105">
                     
                     <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4">
                         <span class="viral-tag shadow-sm">Trending Now</span>
@@ -105,7 +111,12 @@
                         <span id="source-mock" class="font-mono tracking-tight"></span>
                     </div>
                     
-                    <h1 id="news-headline" class="news-headline text-2xl text-gray-900 mb-3"></h1>
+                    <div class="flex items-start justify-between gap-4 mb-3">
+                        <h1 id="news-headline" class="news-headline text-2xl text-gray-900"></h1>
+                        <button id="copy-headline-btn" class="shrink-0 p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md transition-colors" aria-label="Copy Headline">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                     
                     <div class="mt-4 text-gray-600 text-sm leading-relaxed border-l-4 border-gray-300 pl-4 italic">
                         "<span id="news-desc"></span>"
@@ -128,9 +139,73 @@
 
     </div>
 
+    <!-- Info Modal -->
+    <div id="info-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true" role="dialog" aria-modal="true">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" id="modal-overlay"></div>
+
+        <!-- Content -->
+        <div class="relative min-h-screen sm:min-h-full flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all relative top-0 sm:top-auto">
+                <div class="bg-slate-900 text-white p-4 flex justify-between items-center border-b border-slate-700">
+                    <h3 id="modal-title" class="font-bold text-lg tracking-wide">Mission Info</h3>
+                    <button id="modal-close" class="text-slate-400 hover:text-white transition-colors" aria-label="Close Modal">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="modal-content" class="p-6 text-slate-700 leading-relaxed">
+                    <!-- Content injected via JS -->
+                </div>
+                <div class="bg-slate-50 p-4 border-t border-slate-100 flex justify-end">
+                    <button id="modal-dismiss" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium rounded-lg text-sm transition-colors">
+                        Got it
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- DATA REPOSITORY ---
         
+        const gradeInfoData = {
+            "6": {
+                title: "6th Grade Mission: Shortcuts & Summaries",
+                content: `
+                    <p class="mb-4"><strong>Goal:</strong> Learn keyboard shortcuts and how to verify headlines using Google's AI summaries.</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li><strong>Keyboard Shortcuts:</strong> Use <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">Ctrl+C</code> (Copy) and <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">Ctrl+V</code> (Paste) to quickly search.</li>
+                        <li><strong>Google Search:</strong> Paste the headline into Google.</li>
+                        <li><strong>Verify:</strong> Look at the AI summary or featured snippet. Click the source link to confirm—don't just trust the summary text!</li>
+                        <li><strong>Lesson:</strong> Certainty is a spectrum. How sure are you?</li>
+                    </ul>
+                `
+            },
+            "7": {
+                title: "7th Grade Mission: Focused Searching",
+                content: `
+                    <p class="mb-4"><strong>Goal:</strong> Use advanced search operators to filter for trusted sites.</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li><strong>The "site:" Operator:</strong> Type <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">site:.gov</code> or <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">site:.edu</code> after your search terms.</li>
+                        <li><strong>Why?</strong> This limits results to government or educational websites, which are usually more reliable for facts.</li>
+                        <li><strong>Practice:</strong> Use this technique to verify the "investigation target."</li>
+                        <li><strong>Lesson:</strong> Knowing <em>where</em> to look is as important as <em>what</em> to look for.</li>
+                    </ul>
+                `
+            },
+            "8": {
+                title: "8th Grade Mission: Impact & Independence",
+                content: `
+                    <p class="mb-4"><strong>Goal:</strong> Analyze the harm of misinformation and create your own verification plan.</p>
+                    <ul class="list-disc list-inside space-y-2 text-sm">
+                        <li><strong>Harm Analysis:</strong> If this headline is false, who gets hurt? Rank scenarios from "most harmful" to "least harmful."</li>
+                        <li><strong>Independent Search:</strong> You have no prompts. Decide which keywords and search methods (like <code>site:</code> or checking Snopes) are best.</li>
+                        <li><strong>Lesson:</strong> We share responsibility for the information we spread.</li>
+                    </ul>
+                `
+            }
+        };
+
         const scenarioData = {
             "6": [
                 // GRADE 6: ALL FAKE. Focus: Copy/Paste shortcuts & AI Summary verification.
@@ -318,17 +393,40 @@
         const taskSubtext = document.getElementById('task-subtext');
         const image = document.getElementById('news-image');
         const container = document.getElementById('card-container');
+        const copyHeadlineBtn = document.getElementById('copy-headline-btn');
+
+        // Modal Elements
+        const modal = document.getElementById('info-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const infoBtn = document.getElementById('info-btn');
+        const modalClose = document.getElementById('modal-close');
+        const modalDismiss = document.getElementById('modal-dismiss');
+        const modalOverlay = document.getElementById('modal-overlay');
 
         // State
         let currentGrade = "6";
-
-        // Init Icons
-        lucide.createIcons();
 
         // Initialize App
         function init() {
             populateScenarioDropdown(currentGrade);
             loadScenario(0);
+            lucide.createIcons();
+        }
+
+        // Modal Functions
+        function showGradeInfo() {
+            const info = gradeInfoData[currentGrade];
+            if (info) {
+                modalTitle.textContent = info.title;
+                modalContent.innerHTML = info.content;
+                modal.classList.remove('hidden');
+                // Trap focus logic could go here for full accessibility
+            }
+        }
+
+        function hideGradeInfo() {
+            modal.classList.add('hidden');
         }
 
         // Update Scenario Dropdown based on Grade
@@ -407,6 +505,43 @@
 
         scenarioSelect.addEventListener('change', (e) => {
             loadScenario(e.target.value);
+        });
+
+        infoBtn.addEventListener('click', showGradeInfo);
+        modalClose.addEventListener('click', hideGradeInfo);
+        modalDismiss.addEventListener('click', hideGradeInfo);
+        modalOverlay.addEventListener('click', hideGradeInfo);
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                hideGradeInfo();
+            }
+        });
+
+        // Copy Headline Functionality
+        copyHeadlineBtn.addEventListener('click', () => {
+            const textToCopy = headline.textContent;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const icon = copyHeadlineBtn.querySelector('i');
+                const originalIcon = icon.getAttribute('data-lucide');
+
+                // Change icon to checkmark temporarily
+                // We need to re-render the icon, Lucide works by replacing the i tag with an svg.
+                // A simpler way with Lucide is to replace the SVG content or classes,
+                // but since Lucide replaces the <i> tag, we should just toggle a class or change innerHTML carefully.
+                // However, the easiest way with the CDN script is to reset the innerHTML of the button to a check icon
+
+                copyHeadlineBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-green-600"></i>';
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    copyHeadlineBtn.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i>';
+                    lucide.createIcons();
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
         });
 
         // Start
