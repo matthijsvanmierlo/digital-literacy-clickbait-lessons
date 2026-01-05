@@ -6,27 +6,19 @@
     <title>Digital Investigation Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Georgia:serif&display=swap" rel="stylesheet">
     <style>
-        .widget-container {
+        body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            max-width: 800px; /* Increased width */
-            margin: 0 auto;
-            overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            background-color: #f1f5f9;
         }
 
-        .news-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .news-headline {
+            font-family: 'Georgia', serif;
+            font-weight: 700;
+            line-height: 1.25;
         }
 
-        /* Simulating a "Viral Post" look */
         .viral-tag {
             background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
             color: white;
@@ -39,167 +31,221 @@
             border-radius: 4px;
         }
 
-        .news-headline {
-            font-family: 'Georgia', serif;
-            font-weight: 700;
-            line-height: 1.25;
-        }
-
-        /* Fade animation for switching cards */
+        /* Animations */
         .fade-in {
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.4s ease-out forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Scrollbar aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body class="bg-gray-100 p-6 flex items-center justify-center min-h-screen">
+<body class="text-slate-800 min-h-screen flex flex-col">
 
-    <div class="widget-container w-full">
-        
-        <div class="bg-slate-900 text-white p-5 border-b border-slate-700">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="eye" class="text-blue-400"></i>
-                    <h2 class="text-lg font-bold tracking-wide">SCENARIO VIEWER</h2>
-                </div>
-                
+    <!-- Navbar -->
+    <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between h-auto sm:h-16 py-3 sm:py-0 gap-4">
                 <div class="flex items-center gap-3">
-                    <button id="info-btn" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-1.5 rounded transition-colors border border-blue-500 shadow-sm" aria-label="View Mission Info">
-                        <i data-lucide="info" class="w-3.5 h-3.5"></i>
-                        <span>MISSION INFO</span>
-                    </button>
-
-                    <div class="flex items-center gap-2 bg-slate-800 rounded px-2 py-1 border border-slate-700">
-                        <label for="grade-select" class="text-xs text-slate-400 font-mono uppercase">Class Level:</label>
-                    <select id="grade-select" class="bg-transparent text-white font-bold text-sm focus:outline-none cursor-pointer">
-                        <option value="6">GRADE 6</option>
-                        <option value="7">GRADE 7</option>
-                        <option value="8">GRADE 8</option>
-                    </select>
+                    <div class="bg-blue-600 p-2 rounded-lg">
+                        <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-none tracking-wide">DIGITAL INVESTIGATION</h1>
+                        <span class="text-xs text-slate-400 font-mono uppercase tracking-wider">Simulation Unit</span>
+                    </div>
                 </div>
-            </div>
-
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Select Investigation Target:</label>
-            <div class="relative text-slate-800">
-                <select id="scenario-select" class="w-full p-3 pr-10 rounded-lg bg-slate-100 border-2 border-slate-200 focus:border-blue-500 focus:ring-0 font-medium cursor-pointer appearance-none transition-colors">
-                    </select>
-                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
-                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
-                </div>
-            </div>
-        </div>
-
-        <div id="card-container" class="p-6 bg-slate-50">
-            
-            <div class="news-card shadow-md mb-6 fade-in">
                 
-                <div class="relative bg-gray-200 group">
-                    <img id="news-image" src="" alt="News Image" class="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105">
-                    
-                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4">
-                        <span class="viral-tag shadow-sm">Trending Now</span>
-                    </div>
-                </div>
-
-                <div class="p-5">
-                    <div class="flex items-center gap-2 text-gray-500 text-xs font-medium mb-3">
-                        <i data-lucide="globe" class="w-3 h-3 text-blue-500"></i>
-                        <span id="source-mock" class="font-mono tracking-tight"></span>
-                    </div>
-                    
-                    <div class="flex items-start justify-between gap-4 mb-3">
-                        <h1 id="news-headline" class="news-headline text-2xl text-gray-900"></h1>
-                        <button id="copy-headline-btn" class="shrink-0 p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-md transition-colors" aria-label="Copy Headline">
-                            <i data-lucide="copy" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="mt-4 text-gray-600 text-sm leading-relaxed border-l-4 border-gray-300 pl-4 italic">
-                        "<span id="news-desc"></span>"
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-blue-600 text-white rounded-lg p-5 shadow-lg flex items-start gap-4 fade-in">
-                <div class="bg-white/20 p-2 rounded-full shrink-0">
-                    <i data-lucide="search" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-blue-100 text-xs uppercase tracking-wider mb-1">Your Mission</h3>
-                    <p id="investigation-task" class="font-semibold text-lg leading-tight"></p>
-                    <p class="text-blue-200 text-sm mt-2 font-mono" id="task-subtext"></p>
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- Info Modal -->
-    <div id="info-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true" role="dialog" aria-modal="true">
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" id="modal-overlay"></div>
-
-        <!-- Content -->
-        <div class="relative min-h-screen sm:min-h-full flex items-center justify-center p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all relative top-0 sm:top-auto">
-                <div class="bg-slate-900 text-white p-4 flex justify-between items-center border-b border-slate-700">
-                    <h3 id="modal-title" class="font-bold text-lg tracking-wide">Mission Info</h3>
-                    <button id="modal-close" class="text-slate-400 hover:text-white transition-colors" aria-label="Close Modal">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
-                </div>
-                <div id="modal-content" class="p-6 text-slate-700 leading-relaxed">
-                    <!-- Content injected via JS -->
-                </div>
-                <div class="bg-slate-50 p-4 border-t border-slate-100 flex justify-end">
-                    <button id="modal-dismiss" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-medium rounded-lg text-sm transition-colors">
-                        Got it
-                    </button>
-                </div>
+                <nav class="flex bg-slate-800 p-1 rounded-lg">
+                    <button onclick="changeGrade('6')" id="nav-grade-6" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700">Grade 6</button>
+                    <button onclick="changeGrade('7')" id="nav-grade-7" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700">Grade 7</button>
+                    <button onclick="changeGrade('8')" id="nav-grade-8" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-700">Grade 8</button>
+                </nav>
             </div>
         </div>
-    </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- View: Grade Dashboard (List of Scenarios + Mission Info) -->
+        <div id="view-dashboard" class="fade-in">
+            <!-- Mission Info Hero -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
+                <div class="bg-slate-50 border-b border-slate-100 px-6 py-4 flex items-center gap-2">
+                    <i data-lucide="target" class="text-blue-600 w-5 h-5"></i>
+                    <h2 id="mission-title" class="font-bold text-slate-800">Mission Briefing</h2>
+                </div>
+                <div class="p-6 md:flex gap-8 items-start">
+                    <div class="flex-grow prose prose-slate max-w-none text-slate-600" id="mission-content">
+                        <!-- Injected Content -->
+                    </div>
+                    <div class="hidden md:block shrink-0 bg-blue-50 p-4 rounded-xl border border-blue-100 w-64">
+                        <h3 class="text-blue-800 font-bold text-xs uppercase tracking-wider mb-2">Investigator Tip</h3>
+                        <p class="text-sm text-blue-700">Always verify before you trust. The scenarios below test the skills outlined in this mission.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scenario Grid -->
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-800">Available Scenarios</h3>
+                <span class="text-xs font-mono bg-slate-200 text-slate-600 px-2 py-1 rounded">Select one to begin</span>
+            </div>
+
+            <div id="scenario-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards injected here -->
+            </div>
+        </div>
+
+        <!-- View: Scenario Detail -->
+        <div id="view-detail" class="hidden">
+            <button onclick="showDashboard()" class="mb-6 flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors font-medium">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Back to Mission Dashboard
+            </button>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- Left: The News Card -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+                        <!-- Browser Header Mockup -->
+                        <div class="bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center gap-2">
+                            <div class="flex gap-1.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="flex-grow mx-4 bg-white rounded border border-slate-300 px-3 py-1 text-xs text-slate-400 font-mono truncate flex items-center">
+                                <i data-lucide="lock" class="w-3 h-3 mr-1.5 opacity-50"></i>
+                                <span id="detail-url-mock">https://www.news-source.com/article/view</span>
+                            </div>
+                        </div>
+
+                        <!-- Image Section -->
+                        <div class="relative bg-slate-900 group aspect-video flex items-center justify-center overflow-hidden">
+                            <img id="detail-image" src="" alt="News Image" class="w-full h-full object-contain">
+                            <div class="absolute bottom-4 left-4">
+                                <span class="viral-tag shadow-lg">Trending</span>
+                            </div>
+                        </div>
+
+                        <!-- Content Section -->
+                        <div class="p-6 sm:p-8">
+                            <div class="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-wider mb-4">
+                                <i data-lucide="globe" class="w-3 h-3 text-blue-500"></i>
+                                <span id="detail-source">Source Name</span>
+                                <span class="text-slate-300">•</span>
+                                <span id="detail-time">2 hrs ago</span>
+                            </div>
+
+                            <h1 id="detail-headline" class="news-headline text-2xl sm:text-3xl text-slate-900 mb-6">Headline Goes Here</h1>
+
+                            <div class="relative pl-6 border-l-4 border-blue-200">
+                                <p id="detail-desc" class="text-lg text-slate-600 italic leading-relaxed">Description text...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: The Mission Task -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Task Card -->
+                    <div class="bg-slate-800 text-white rounded-xl shadow-lg overflow-hidden sticky top-24">
+                        <div class="bg-blue-600 p-4 flex items-center gap-3">
+                            <div class="bg-white/20 p-1.5 rounded-lg">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <h3 class="font-bold tracking-wide text-sm uppercase">Your Assignment</h3>
+                        </div>
+
+                        <div class="p-6 space-y-6">
+                            <div>
+                                <h4 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">Step 1: Investigate</h4>
+                                <p id="detail-task" class="text-lg font-medium leading-snug">Task instruction goes here.</p>
+                            </div>
+
+                            <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                                <h4 class="text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Step 2: Verify</h4>
+                                <p id="detail-subtext" class="text-slate-300 text-sm font-mono">Subtext hint goes here.</p>
+                            </div>
+
+                            <div class="pt-4 border-t border-slate-700">
+                                <button id="copy-btn" class="w-full bg-white text-slate-900 hover:bg-blue-50 font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                                    <i data-lucide="copy" class="w-4 h-4"></i>
+                                    Copy Headline
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
+            <p>&copy; Digital Investigation Simulation Unit. Designed for Educational Use.</p>
+        </div>
+    </footer>
 
     <script>
-        // --- DATA REPOSITORY ---
-        
+        // --- DATA ---
         const gradeInfoData = {
             "6": {
-                title: "6th Grade Mission: Shortcuts & Summaries",
+                title: "Grade 6 Mission: Shortcuts & Summaries",
                 content: `
-                    <p class="mb-4"><strong>Goal:</strong> Learn keyboard shortcuts and how to verify headlines using Google's AI summaries.</p>
-                    <ul class="list-disc list-inside space-y-2 text-sm">
-                        <li><strong>Keyboard Shortcuts:</strong> Use <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">Ctrl+C</code> (Copy) and <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">Ctrl+V</code> (Paste) to quickly search.</li>
-                        <li><strong>Google Search:</strong> Paste the headline into Google.</li>
-                        <li><strong>Verify:</strong> Look at the AI summary or featured snippet. Click the source link to confirm—don't just trust the summary text!</li>
+                    <p class="mb-2"><strong>Goal:</strong> Learn keyboard shortcuts and how to verify headlines using Google's AI summaries.</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><strong>Keyboard Shortcuts:</strong> Use <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+C</code> (Copy) and <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+V</code> (Paste) to quickly search.</li>
+                        <li><strong>Verify:</strong> Look at the AI summary or featured snippet. Click the source link to confirm!</li>
                         <li><strong>Lesson:</strong> Certainty is a spectrum. How sure are you?</li>
                     </ul>
                 `
             },
             "7": {
-                title: "7th Grade Mission: Focused Searching",
+                title: "Grade 7 Mission: Focused Searching",
                 content: `
-                    <p class="mb-4"><strong>Goal:</strong> Use advanced search operators to filter for trusted sites.</p>
-                    <ul class="list-disc list-inside space-y-2 text-sm">
-                        <li><strong>The "site:" Operator:</strong> Type <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">site:.gov</code> or <code class="bg-slate-100 px-1 py-0.5 rounded border border-slate-300">site:.edu</code> after your search terms.</li>
-                        <li><strong>Why?</strong> This limits results to government or educational websites, which are usually more reliable for facts.</li>
-                        <li><strong>Practice:</strong> Use this technique to verify the "investigation target."</li>
+                    <p class="mb-2"><strong>Goal:</strong> Use advanced search operators to filter for trusted sites.</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><strong>The "site:" Operator:</strong> Type <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">site:.gov</code> or <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">site:.edu</code> after your search terms.</li>
+                        <li><strong>Why?</strong> This limits results to government or educational websites.</li>
                         <li><strong>Lesson:</strong> Knowing <em>where</em> to look is as important as <em>what</em> to look for.</li>
                     </ul>
                 `
             },
             "8": {
-                title: "8th Grade Mission: Impact & Independence",
+                title: "Grade 8 Mission: Impact & Independence",
                 content: `
-                    <p class="mb-4"><strong>Goal:</strong> Analyze the harm of misinformation and create your own verification plan.</p>
-                    <ul class="list-disc list-inside space-y-2 text-sm">
-                        <li><strong>Harm Analysis:</strong> If this headline is false, who gets hurt? Rank scenarios from "most harmful" to "least harmful."</li>
-                        <li><strong>Independent Search:</strong> You have no prompts. Decide which keywords and search methods (like <code>site:</code> or checking Snopes) are best.</li>
+                    <p class="mb-2"><strong>Goal:</strong> Analyze the harm of misinformation and create your own verification plan.</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm">
+                        <li><strong>Harm Analysis:</strong> If this headline is false, who gets hurt?</li>
+                        <li><strong>Independent Search:</strong> You have no prompts. Decide which keywords and search methods are best.</li>
                         <li><strong>Lesson:</strong> We share responsibility for the information we spread.</li>
                     </ul>
                 `
@@ -208,7 +254,6 @@
 
         const scenarioData = {
             "6": [
-                // GRADE 6: ALL FAKE. Focus: Copy/Paste shortcuts & AI Summary verification.
                 {
                     id: "6-1",
                     title: "T-Rex Cloned",
@@ -266,7 +311,6 @@
                 }
             ],
             "7": [
-                // GRADE 7: TRUE & FAKE MIX. Focus: Using "site:" operators.
                 {
                     id: "7-1",
                     title: "Penny Cost (TRUE)",
@@ -324,7 +368,6 @@
                 }
             ],
             "8": [
-                // GRADE 8: TRUE & FAKE MIX. Focus: Harm ranking & Independent Verification.
                 {
                     id: "8-1",
                     title: "Tap Water Zombie (FALSE)",
@@ -383,164 +426,147 @@
             ]
         };
 
-        // DOM Elements
-        const gradeSelect = document.getElementById('grade-select');
-        const scenarioSelect = document.getElementById('scenario-select');
-        const headline = document.getElementById('news-headline');
-        const desc = document.getElementById('news-desc');
-        const sourceMock = document.getElementById('source-mock');
-        const task = document.getElementById('investigation-task');
-        const taskSubtext = document.getElementById('task-subtext');
-        const image = document.getElementById('news-image');
-        const container = document.getElementById('card-container');
-        const copyHeadlineBtn = document.getElementById('copy-headline-btn');
+        // --- APP LOGIC ---
 
-        // Modal Elements
-        const modal = document.getElementById('info-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalContent = document.getElementById('modal-content');
-        const infoBtn = document.getElementById('info-btn');
-        const modalClose = document.getElementById('modal-close');
-        const modalDismiss = document.getElementById('modal-dismiss');
-        const modalOverlay = document.getElementById('modal-overlay');
-
-        // State
         let currentGrade = "6";
+        let activeScenario = null;
 
-        // Initialize App
+        const viewDashboard = document.getElementById('view-dashboard');
+        const viewDetail = document.getElementById('view-detail');
+        const scenarioGrid = document.getElementById('scenario-grid');
+        const missionTitle = document.getElementById('mission-title');
+        const missionContent = document.getElementById('mission-content');
+
+        // Detail Elements
+        const detailHeadline = document.getElementById('detail-headline');
+        const detailSource = document.getElementById('detail-source');
+        const detailTime = document.getElementById('detail-time');
+        const detailDesc = document.getElementById('detail-desc');
+        const detailImage = document.getElementById('detail-image');
+        const detailTask = document.getElementById('detail-task');
+        const detailSubtext = document.getElementById('detail-subtext');
+        const detailUrlMock = document.getElementById('detail-url-mock');
+        const copyBtn = document.getElementById('copy-btn');
+
         function init() {
-            populateScenarioDropdown(currentGrade);
-            loadScenario(0);
+            changeGrade("6");
             lucide.createIcons();
         }
 
-        // Modal Functions
-        function showGradeInfo() {
-            const info = gradeInfoData[currentGrade];
-            if (info) {
-                modalTitle.textContent = info.title;
-                modalContent.innerHTML = info.content;
-                modal.classList.remove('hidden');
-                // Trap focus logic could go here for full accessibility
-            }
-        }
-
-        function hideGradeInfo() {
-            modal.classList.add('hidden');
-        }
-
-        // Update Scenario Dropdown based on Grade
-        function populateScenarioDropdown(grade) {
-            // Clear existing
-            scenarioSelect.innerHTML = '';
+        function changeGrade(grade) {
+            currentGrade = grade;
             
-            const scenarios = scenarioData[grade];
-            
-            if (scenarios.length === 0) {
-                // Handle empty grade
-                const opt = document.createElement('option');
-                opt.textContent = "No content available";
-                scenarioSelect.appendChild(opt);
-                scenarioSelect.disabled = true;
-                return;
-            } else {
-                scenarioSelect.disabled = false;
-            }
-            
-            scenarios.forEach((item, index) => {
-                const opt = document.createElement('option');
-                opt.value = index;
-                opt.textContent = item.title;
-                scenarioSelect.appendChild(opt);
+            // Update Nav Styles
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-slate-700');
             });
+            const activeBtn = document.getElementById(`nav-grade-${grade}`);
+            activeBtn.classList.remove('text-slate-300', 'hover:text-white', 'hover:bg-slate-700');
+            activeBtn.classList.add('bg-blue-600', 'text-white');
+
+            // Render Dashboard
+            renderDashboard();
+            showDashboard();
         }
 
-        // Load specific scenario data
-        function loadScenario(index) {
-            // Guard clause for empty data
-            if (!scenarioData[currentGrade] || scenarioData[currentGrade].length === 0) {
-                headline.textContent = "Content Unavailable";
-                desc.textContent = "There are no scenarios currently loaded for this grade level.";
-                sourceMock.textContent = "System System";
-                task.textContent = "Select a different grade level.";
-                taskSubtext.textContent = "";
-                image.src = "https://placehold.co/600x400/e2e8f0/64748b?text=No+Data";
-                return;
-            }
+        function renderDashboard() {
+            // 1. Render Mission Info
+            const info = gradeInfoData[currentGrade];
+            missionTitle.textContent = info.title;
+            missionContent.innerHTML = info.content;
 
+            // 2. Render Scenario Grid
+            const scenarios = scenarioData[currentGrade] || [];
+            scenarioGrid.innerHTML = '';
+
+            scenarios.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden cursor-pointer card-hover flex flex-col h-full";
+                card.onclick = () => openScenario(index);
+
+                card.innerHTML = `
+                    <div class="h-48 bg-slate-100 relative overflow-hidden">
+                         <img src="${item.localFilename}"
+                              alt="${item.title}"
+                              class="w-full h-full object-contain"
+                              onerror="this.src='https://placehold.co/600x400/e2e8f0/64748b?text=Image+N/A'">
+                         <div class="absolute bottom-2 left-2 bg-slate-900/80 text-white text-xs font-bold px-2 py-1 rounded">
+                             ${item.source}
+                         </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h4 class="font-bold text-lg text-slate-900 leading-tight mb-2 line-clamp-2">${item.headline}</h4>
+                        <p class="text-sm text-slate-500 line-clamp-3 mb-4 flex-grow">${item.desc}</p>
+                        <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                             <span class="text-xs font-medium text-slate-400">ID: ${item.id}</span>
+                             <span class="text-blue-600 font-bold text-sm flex items-center gap-1 group">
+                                Investigate <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                             </span>
+                        </div>
+                    </div>
+                `;
+                scenarioGrid.appendChild(card);
+            });
+            
+            // Re-init icons for new content
+            lucide.createIcons();
+        }
+
+        function openScenario(index) {
             const scenario = scenarioData[currentGrade][index];
-            
-            // Fade Out
-            container.style.opacity = '0.5';
-            
-            setTimeout(() => {
-                // Update Text Content
-                headline.textContent = scenario.headline;
-                desc.textContent = scenario.desc;
-                sourceMock.textContent = `${scenario.source} • ${scenario.time}`;
-                task.textContent = scenario.task;
-                taskSubtext.textContent = scenario.subtext;
-                
-                // Update Image with Local File Logic
-                // We attempt to load the local file. 
-                // The onerror handler creates a helpful placeholder if the file is missing locally.
-                image.onerror = function() {
-                    this.onerror = null; // Prevent infinite loop
-                    // Generates a placeholder image showing the missing filename for debugging/setup
-                    this.src = `https://placehold.co/600x400/e2e8f0/64748b?text=File+Missing:+${scenario.localFilename}`;
-                };
-                image.src = scenario.localFilename; // Assumes root folder
-                
-                // Fade In
-                container.style.opacity = '1';
-            }, 150);
+            activeScenario = scenario;
+
+            // Populate Detail View
+            detailHeadline.textContent = scenario.headline;
+            detailDesc.textContent = scenario.desc;
+            detailSource.textContent = scenario.source;
+            detailTime.textContent = scenario.time;
+            detailTask.textContent = scenario.task;
+            detailSubtext.textContent = scenario.subtext;
+
+            // Mock URL
+            const cleanSource = scenario.source.replace(/\s+/g, '-').toLowerCase();
+            detailUrlMock.textContent = `https://www.${cleanSource}/article/${scenario.id}`;
+            detailUrlMock.href = "#"; // Disable actual link
+
+            // Image
+            detailImage.src = scenario.localFilename;
+            detailImage.onerror = function() {
+                this.src = "https://placehold.co/600x400/e2e8f0/64748b?text=Image+N/A";
+            };
+
+            // Switch Views
+            viewDashboard.classList.add('hidden');
+            viewDetail.classList.remove('hidden');
+            viewDetail.classList.add('fade-in');
+
+            // Scroll to top
+            window.scrollTo(0,0);
         }
 
-        // Event Listeners
-        gradeSelect.addEventListener('change', (e) => {
-            currentGrade = e.target.value;
-            populateScenarioDropdown(currentGrade);
-            loadScenario(0); // Reset to first card of new grade
-        });
+        function showDashboard() {
+            viewDetail.classList.add('hidden');
+            viewDashboard.classList.remove('hidden');
+            viewDashboard.classList.add('fade-in');
+            window.scrollTo(0,0);
+        }
 
-        scenarioSelect.addEventListener('change', (e) => {
-            loadScenario(e.target.value);
-        });
-
-        infoBtn.addEventListener('click', showGradeInfo);
-        modalClose.addEventListener('click', hideGradeInfo);
-        modalDismiss.addEventListener('click', hideGradeInfo);
-        modalOverlay.addEventListener('click', hideGradeInfo);
-
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                hideGradeInfo();
-            }
-        });
-
-        // Copy Headline Functionality
-        copyHeadlineBtn.addEventListener('click', () => {
-            const textToCopy = headline.textContent;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const icon = copyHeadlineBtn.querySelector('i');
-                const originalIcon = icon.getAttribute('data-lucide');
-
-                // Change icon to checkmark temporarily
-                // We need to re-render the icon, Lucide works by replacing the i tag with an svg.
-                // A simpler way with Lucide is to replace the SVG content or classes,
-                // but since Lucide replaces the <i> tag, we should just toggle a class or change innerHTML carefully.
-                // However, the easiest way with the CDN script is to reset the innerHTML of the button to a check icon
-
-                copyHeadlineBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4 text-green-600"></i>';
+        // Copy functionality
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(detailHeadline.textContent).then(() => {
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copied!`;
+                copyBtn.classList.remove('text-slate-900', 'bg-white');
+                copyBtn.classList.add('bg-green-600', 'text-white');
                 lucide.createIcons();
 
                 setTimeout(() => {
-                    copyHeadlineBtn.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i>';
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.classList.add('text-slate-900', 'bg-white');
+                    copyBtn.classList.remove('bg-green-600', 'text-white');
                     lucide.createIcons();
                 }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
             });
         });
 
