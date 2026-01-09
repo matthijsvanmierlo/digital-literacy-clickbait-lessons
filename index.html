@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <title>Digital Investigation Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -198,6 +199,19 @@
                                     <i data-lucide="copy" class="w-4 h-4"></i>
                                     Copy Headline
                                 </button>
+                                <div id="copy-reminder" class="hidden w-full bg-slate-700/50 p-4 rounded-lg border border-slate-600 text-center">
+                                    <div class="flex justify-center gap-4 mb-2">
+                                        <div class="flex flex-col items-center">
+                                            <div class="bg-white/10 p-2 rounded-lg mb-1"><i data-lucide="copy" class="w-5 h-5 text-blue-300"></i></div>
+                                            <span class="text-xs text-slate-400 font-mono">CTRL+C</span>
+                                        </div>
+                                         <div class="flex flex-col items-center">
+                                            <div class="bg-white/10 p-2 rounded-lg mb-1"><i data-lucide="clipboard" class="w-5 h-5 text-blue-300"></i></div>
+                                             <span class="text-xs text-slate-400 font-mono">CTRL+V</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm font-bold text-blue-200">Copy & Paste the Headline</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -447,6 +461,7 @@
         const detailSubtext = document.getElementById('detail-subtext');
         const detailUrlMock = document.getElementById('detail-url-mock');
         const copyBtn = document.getElementById('copy-btn');
+        const copyReminder = document.getElementById('copy-reminder');
 
         function init() {
             changeGrade("6");
@@ -524,6 +539,15 @@
             detailTime.textContent = scenario.time;
             detailTask.textContent = scenario.task;
             detailSubtext.textContent = scenario.subtext;
+
+            // Toggle Copy Button vs Reminder based on Grade
+            if (currentGrade === '6') {
+                copyBtn.classList.add('hidden');
+                copyReminder.classList.remove('hidden');
+            } else {
+                copyBtn.classList.remove('hidden');
+                copyReminder.classList.add('hidden');
+            }
 
             // Mock URL
             const cleanSource = scenario.source.replace(/\s+/g, '-').toLowerCase();
