@@ -464,7 +464,22 @@
         const copyReminder = document.getElementById('copy-reminder');
 
         function init() {
-            changeGrade("6");
+            // Check for grade in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const gradeParam = urlParams.get('grade');
+
+            // Default to 6
+            let targetGrade = "6";
+
+            if (gradeParam && ["6", "7", "8"].includes(gradeParam)) {
+                targetGrade = gradeParam;
+
+                // Clean up URL
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+
+            changeGrade(targetGrade);
             lucide.createIcons();
         }
 
