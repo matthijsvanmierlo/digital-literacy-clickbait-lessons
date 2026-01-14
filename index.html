@@ -212,6 +212,10 @@
                                     </div>
                                     <p class="text-sm font-bold text-blue-200">Copy & Paste the Headline</p>
                                 </div>
+                                <button id="keywords-btn" class="hidden mt-4 w-full bg-slate-700 text-blue-200 hover:bg-slate-600 hover:text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors border border-slate-600 text-sm" onclick="openModal()">
+                                    <i data-lucide="search" class="w-4 h-4"></i>
+                                    Finding Search Terms
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -221,6 +225,46 @@
         </div>
 
     </main>
+
+    <!-- Modal: Finding Search Terms -->
+    <div id="modal-keywords" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i data-lucide="search" class="h-6 w-6 text-blue-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Finding Search Terms</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 mb-4">
+                                    You want to develop a broad understanding of your topic while cross referencing information.
+                                </p>
+                                <p class="text-sm font-bold text-gray-700 mb-2">This is so that you can...</p>
+                                <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                                    <li>Sort and filter reliable information from misinformation</li>
+                                    <li>Develop targeted lists of search terms and concepts</li>
+                                    <li>Begin to understand nuances of your topic</li>
+                                    <li>Make it easier to find reputable and vetted sources</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal()">
+                        Got it
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="bg-white border-t border-slate-200 mt-12 py-8">
         <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
@@ -234,11 +278,12 @@
             "6": {
                 title: "Grade 6 Mission: Shortcuts & Summaries",
                 content: `
-                    <p class="mb-2"><strong>Goal:</strong> Learn keyboard shortcuts and how to verify headlines using Google's AI summaries.</p>
+                    <p class="mb-2"><strong>Goal:</strong> Learn keyboard shortcuts, verify with AI summaries, and dig deeper into search results.</p>
                     <ul class="list-disc list-inside space-y-1 text-sm">
-                        <li><strong>Keyboard Shortcuts:</strong> Use <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+C</code> (Copy) and <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+V</code> (Paste) to quickly search.</li>
-                        <li><strong>Verify:</strong> Look at the AI summary or featured snippet. Click the source link to confirm!</li>
-                        <li><strong>Lesson:</strong> Certainty is a spectrum. How sure are you?</li>
+                        <li><strong>Keyboard Shortcuts:</strong> Use <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+C</code> (Copy) and <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+V</code> (Paste).</li>
+                        <li><strong>AI & Beyond:</strong> Acknowledge the AI summary, but <em>don't solely rely on it</em>.</li>
+                        <li><strong>Review Results:</strong> Look at "General Search Results" and click linked sources to verify.</li>
+                        <li><strong>Keywords:</strong> Determine other search terms to find reputable coverage.</li>
                     </ul>
                 `
             },
@@ -276,7 +321,7 @@
                     time: "Viral",
                     desc: "A Florida lab claims to have hatched the first dinosaur in 65 million years using DNA from a mosquito trapped in amber.",
                     task: "Highlight and copy (Ctrl+C) this phrase: 'Scientists clone baby T-Rex Florida 2027'.",
-                    subtext: "Paste (Ctrl+V) into Google. Does the AI Summary say this is real or a 'hoax'?",
+                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
                     localFilename: "grade6_dino_clone.jpg"
                 },
                 {
@@ -287,7 +332,7 @@
                     time: "2 hrs ago",
                     desc: "Citing 'stress levels,' the Department of Education has allegedly banned all take-home assignments for middle schoolers.",
                     task: "Copy (Ctrl+C): 'Department of Education illegal homework ban'.",
-                    subtext: "Paste (Ctrl+V) into Google. Check the source—is it a .gov site or a fake news site?",
+                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
                     localFilename: "grade6_homework_ban.jpg"
                 },
                 {
@@ -298,7 +343,7 @@
                     time: "Trending",
                     desc: "Researchers are testing special materials that bend light to make objects disappear. It sounds like magic, but scientists are actually working on it.",
                     task: "Copy (Ctrl+C): 'real invisibility cloak technology'.",
-                    subtext: "Paste (Ctrl+V). This technology is real! Read the results to see how it works and what its limitations are.",
+                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
                     localFilename: "grade6_invisible_cloak.jpg"
                 },
                 {
@@ -309,7 +354,7 @@
                     time: "Viral",
                     desc: "You have probably heard this rumor, but this article claims it is scientifically proven: their venom is deadlier than a Cobra's, but their fangs are too short to bite humans.",
                     task: "Copy (Ctrl+C): 'Daddy longlegs most poisonous spider myth'.",
-                    subtext: "Paste (Ctrl+V). This is a classic urban legend. Does the AI Summary label it as a 'Myth' or 'False'?",
+                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
                     localFilename: "grade6_daddy_longlegs.jpg"
                 },
                 {
@@ -320,7 +365,7 @@
                     time: "4 hrs ago",
                     desc: "Using CRISPR gene editing, a farm in California says they have removed the bitter taste and added a sugary gum flavor.",
                     task: "Copy (Ctrl+C): 'Bubblegum flavored broccoli gene editing'.",
-                    subtext: "Paste (Ctrl+V). Does the AI Summary confirm this exists, or was it an April Fools joke?",
+                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
                     localFilename: "grade6_candy_veg.jpg"
                 }
             ],
@@ -462,6 +507,16 @@
         const detailUrlMock = document.getElementById('detail-url-mock');
         const copyBtn = document.getElementById('copy-btn');
         const copyReminder = document.getElementById('copy-reminder');
+        const keywordsBtn = document.getElementById('keywords-btn');
+        const keywordsModal = document.getElementById('modal-keywords');
+
+        function openModal() {
+            keywordsModal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            keywordsModal.classList.add('hidden');
+        }
 
         function init() {
             // Check for grade in URL
@@ -559,9 +614,11 @@
             if (currentGrade === '6') {
                 copyBtn.classList.add('hidden');
                 copyReminder.classList.remove('hidden');
+                if(keywordsBtn) keywordsBtn.classList.remove('hidden');
             } else {
                 copyBtn.classList.remove('hidden');
                 copyReminder.classList.add('hidden');
+                if(keywordsBtn) keywordsBtn.classList.add('hidden');
             }
 
             // Mock URL
