@@ -276,14 +276,13 @@
         // --- DATA ---
         const gradeInfoData = {
             "6": {
-                title: "Grade 6 Mission: Shortcuts & Summaries",
+                title: "Grade 6 Mission: Finding Search Terms",
                 content: `
-                    <p class="mb-2"><strong>Goal:</strong> Learn keyboard shortcuts, verify with AI summaries, and dig deeper into search results.</p>
+                    <p class="mb-2"><strong>Goal:</strong> Learn how to identify the most important keywords to find reliable information.</p>
                     <ul class="list-disc list-inside space-y-1 text-sm">
-                        <li><strong>Keyboard Shortcuts:</strong> Use <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+C</code> (Copy) and <code class="bg-slate-100 text-slate-700 px-1 rounded border border-slate-300">Ctrl+V</code> (Paste).</li>
-                        <li><strong>AI & Beyond:</strong> Acknowledge the AI summary, but <em>don't solely rely on it</em>.</li>
-                        <li><strong>Review Results:</strong> Look at "General Search Results" and click linked sources to verify.</li>
-                        <li><strong>Keywords:</strong> Determine other search terms to find reputable coverage.</li>
+                        <li><strong>Identify Keywords:</strong> Pick out the most important words (names, dates, places, actions).</li>
+                        <li><strong>Avoid Questions:</strong> Don't type full sentences. Search engines work best with specific terms.</li>
+                        <li><strong>Verify:</strong> Use these terms to find other articles and check if the story is true.</li>
                     </ul>
                 `
             },
@@ -320,8 +319,8 @@
                     source: "Dino-Science-Now.net",
                     time: "Viral",
                     desc: "A Florida lab claims to have hatched the first dinosaur in 65 million years using DNA from a mosquito trapped in amber.",
-                    task: "Highlight and copy (Ctrl+C) this phrase: 'Scientists clone baby T-Rex Florida 2027'.",
-                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
+                    task: "Identify the main topic. Good search terms would be: 'Scientists clone T-Rex Florida'",
+                    subtext: "Type these into the search bar. Look for multiple sources to verify.",
                     localFilename: "grade6_dino_clone.jpg"
                 },
                 {
@@ -331,8 +330,8 @@
                     source: "National-Education-News.org",
                     time: "2 hrs ago",
                     desc: "Citing 'stress levels,' the Department of Education has allegedly banned all take-home assignments for middle schoolers.",
-                    task: "Copy (Ctrl+C): 'Department of Education illegal homework ban'.",
-                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
+                    task: "Identify the main topic. Good search terms would be: 'Department of Education illegal homework ban'",
+                    subtext: "Type these into the search bar. Look for official government announcements.",
                     localFilename: "grade6_homework_ban.jpg"
                 },
                 {
@@ -342,8 +341,8 @@
                     source: "Tech-Rumor-Mill.xyz",
                     time: "Trending",
                     desc: "Researchers are testing special materials that bend light to make objects disappear. It sounds like magic, but scientists are actually working on it.",
-                    task: "Copy (Ctrl+C): 'real invisibility cloak technology'.",
-                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
+                    task: "Identify the main topic. Good search terms would be: 'real invisibility cloak technology'",
+                    subtext: "Type these into the search bar. Check if this technology actually exists as described.",
                     localFilename: "grade6_invisible_cloak.jpg"
                 },
                 {
@@ -353,8 +352,8 @@
                     source: "Nature-Trivia-Daily.com",
                     time: "Viral",
                     desc: "You have probably heard this rumor, but this article claims it is scientifically proven: their venom is deadlier than a Cobra's, but their fangs are too short to bite humans.",
-                    task: "Copy (Ctrl+C): 'Daddy longlegs most poisonous spider myth'.",
-                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
+                    task: "Identify the main topic. Good search terms would be: 'Daddy longlegs most poisonous spider myth'",
+                    subtext: "Type these into the search bar. Find out if this common belief is scientifically true.",
                     localFilename: "grade6_daddy_longlegs.jpg"
                 },
                 {
@@ -364,8 +363,8 @@
                     source: "Healthy-Eats-Viral.info",
                     time: "4 hrs ago",
                     desc: "Using CRISPR gene editing, a farm in California says they have removed the bitter taste and added a sugary gum flavor.",
-                    task: "Copy (Ctrl+C): 'Bubblegum flavored broccoli gene editing'.",
-                    subtext: "Paste (Ctrl+V). Acknowledge the AI Summary, but also review general search results to confirm.",
+                    task: "Identify the main topic. Good search terms would be: 'Bubblegum flavored broccoli gene editing'",
+                    subtext: "Type these into the search bar. Is this a real product or a funny story?",
                     localFilename: "grade6_candy_veg.jpg"
                 }
             ],
@@ -613,7 +612,7 @@
             // Toggle Copy Button vs Reminder based on Grade
             if (currentGrade === '6') {
                 copyBtn.classList.add('hidden');
-                copyReminder.classList.remove('hidden');
+                copyReminder.classList.add('hidden');
                 if(keywordsBtn) keywordsBtn.classList.remove('hidden');
             } else {
                 copyBtn.classList.remove('hidden');
